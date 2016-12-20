@@ -91,11 +91,11 @@ puts "node"
 	node 38 [expr $Pier2 - $pzlat23-$FDs] [expr $Floor2];
 
 
-# 定义填充墙节点
-	node 40 $Pier1 $Floor1;;
-	node 41 $Pier2 $Floor1;
-	node 42 [expr $Pier1 + $pzlat23] [expr $Floor2 - $pzvert23];
-	node 43 [expr $Pier2 - $pzlat23] [expr $Floor2 - $pzvert23];
+# # 定义填充墙节点
+	# node 40 $Pier1 $Floor1;;
+	# node 41 $Pier2 $Floor1;
+	# node 42 [expr $Pier1 + $pzlat23] [expr $Floor2 - $pzvert23];
+	# node 43 [expr $Pier2 - $pzlat23] [expr $Floor2 - $pzvert23];
 
 node 50 [expr $Pier1 + $WBay/2] [expr $Floor2];
 
@@ -312,14 +312,14 @@ element zeroLength  50 33 21  -mat $matID_G2  -dir 1;
 element zeroLength  51 36 30  -mat $matID_G2  -dir 1;
 
 	
-#定义填充墙单元
-set Area 28336
-element truss 52 42 41 $Area $matID_P; 
-element truss 53 43 40 $Area $matID_P; 
-element zeroLength  55 7 42 -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
-element zeroLength  56 41 2000  -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
-element zeroLength  57 40 1000  -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
-element zeroLength  58 30 43   -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
+# #定义填充墙单元
+# set Area 28336
+# element truss 52 42 41 $Area $matID_P; 
+# element truss 53 43 40 $Area $matID_P; 
+# element zeroLength  55 7 42 -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
+# element zeroLength  56 41 2000  -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
+# element zeroLength  57 40 1000  -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
+# element zeroLength  58 30 43   -mat $matID_Z1 $matID_Z1 $matID_Z2 -dir 1 2 3;
 
 
 
@@ -368,11 +368,7 @@ set	dat2	0.02
 set	dat3	0.03
 set	dat4	0.04
 set	dat5	0.05
-# set	dat6	0.06
-# set	dat7	0.07
-# set	dat8	0.08
-# set	dat9	0.09
-# set	dat10	0.10
+
 source Display.tcl
 
 puts "loads"
@@ -391,11 +387,7 @@ analyze 1;
 
 
 set bm $HBuilding;
-set iDmax "[expr $dat1*$bm]
-          [expr $dat2*$bm]
-          [expr $dat3*$bm]
-          [expr $dat4*$bm]
-          [expr $dat5*$bm]" ;
+set iDmax "[expr $dat3*$bm]" ;
 
 set IDctrlNode 50
 set IDctrlDOF 1

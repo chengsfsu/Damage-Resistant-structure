@@ -64,8 +64,8 @@ puts "node"
 	
 	# 自复位节点1 at Pier 1, Floor 2
 	node 13 [expr $Pier1 + $pzlat23] [expr $Floor2 + $pzvert23];
-	node 15 [expr $Pier1 + $pzlat23 + ($pzlat32-$pzlat23)/2] [expr $Floor2];
-	node 16 [expr $Pier1 + $pzlat32] [expr $Floor2 - $pzvert23];
+	node 15 [expr $Pier1 + $pzlat23] [expr $Floor2];
+	# node 16 [expr $Pier1 + $pzlat32] [expr $Floor2 - $pzvert23];
 	node 17 [expr $Pier1 + $pzlat23+$FDs] [expr $Floor2];
 	node 18 [expr $Pier1 + $pzlat23+$FDs] [expr $Floor2];
 	
@@ -86,8 +86,8 @@ puts "node"
 
 		# 自复位节点1 at Pier 2, Floor 2
 	node 33 [expr $Pier2 - $pzlat23] [expr $Floor2 + $pzvert23];
-	node 35 [expr $Pier2 - $pzlat23 - ($pzlat32-$pzlat23)/2] [expr $Floor2];
-	node 36 [expr $Pier2 - $pzlat32] [expr $Floor2 - $pzvert23];
+	node 35 [expr $Pier2 - $pzlat23] [expr $Floor2];
+	# node 36 [expr $Pier2 - $pzlat32] [expr $Floor2 - $pzvert23];
 	node 37 [expr $Pier2 - $pzlat23-$FDs] [expr $Floor2];
 	node 38 [expr $Pier2 - $pzlat23-$FDs] [expr $Floor2];
 
@@ -105,8 +105,8 @@ node 50 [expr $Pier1 + $WBay/2] [expr $Floor2];
 	fix 2000 1 1 0;
     
 # 约束竖向位移
-    equalDOF 6 15 2;
-	equalDOF 32 35 2;
+    equalDOF 15 6 2;
+	equalDOF 35 32 2;
 ###################################################################################################
 #          Define Section Properties and Elements													  
 ###################################################################################################
@@ -193,16 +193,24 @@ uniaxialMaterial Hysteretic $matID_P $s1p $e1p $s2p $e2p $s3p $e3p $s1n $e1n $s2
 
 
 # 定义预应力筋参数
-set fz 1860;
+set fz 1674;
 set E2 1.95e5;
+set epsyP 8.58E-3
+set epsyN -4.31e-3
+set eps0 -4.3e-3
 #预应力筋初始应变
 set initStrain 4.3e-3;
 
-uniaxialMaterial Steel01 $matID_T0 $fz $E2 $b;   #预应力筋
-uniaxialMaterial InitStrainMaterial $matID_T1 $matID_T0 $initStrain;
 
+
+# uniaxialMaterial Steel01 $matID_T0 $fz $E2 $b;   #预应力筋
+# uniaxialMaterial InitStrainMaterial $matID_T1 $matID_T0 $initStrain;
+
+
+
+uniaxialMaterial ElasticPP $matID_T1 $E2 $epsyP $epsyP $eps0
 # 定义耗能器参数
-set Ff 158400;
+set Ff [expr 158400];
 set E3 2.06e7;
 set Rhard 0;
 uniaxialMaterial Steel01 $matID_D $Ff $E3 $Rhard ;    # 耗能器
@@ -210,7 +218,7 @@ uniaxialMaterial Steel01 $matID_D $Ff $E3 $Rhard ;    # 耗能器
 # 定义梁柱仅受压缝截面参数
 set Ect 2.06e9; 
 uniaxialMaterial ENT  $matID_G1  $Ect;
-uniaxialMaterial Elastic $matID_G2 [expr $Es/100];
+uniaxialMaterial Elastic $matID_G2 0.2;
 # 定义填充墙铰接参数
 set E0 2.06e10;
 set E1 1;
@@ -282,9 +290,9 @@ element	elasticBeamColumn	9  32 37  [expr $Abeam_23*3] $Es [expr $Ibeam_23*10] $
 
 #定义刚臂接触单元
 element elasticBeamColumn    36    13 15    $Es $Apz $Ipz    $PDeltaTransf;
-element elasticBeamColumn    37    15 16    $Es $Apz $Ipz    $PDeltaTransf;
+# element elasticBeamColumn    37    15 16    $Es $Apz $Ipz    $PDeltaTransf;
 element elasticBeamColumn    38    33 35    $Es $Apz $Ipz    $PDeltaTransf;
-element elasticBeamColumn    39    35 36    $Es $Apz $Ipz    $PDeltaTransf;
+# element elasticBeamColumn    39    35 36    $Es $Apz $Ipz    $PDeltaTransf;
 	
 #定义预应力筋单元
 set ABfrp 7.4e2;
@@ -293,8 +301,8 @@ element truss 61 7 21 $ABfrp $matID_T1;
 	
 
 #定义耗能器单元
-element twoNodeLink 41 17 18 -mat $matID_D $matID_D -dir 1 2;
-element twoNodeLink 42 37 38 -mat $matID_D $matID_D -dir 1 2;
+element twoNodeLink 41 17 18 -mat $matID_D $matID_D  -dir 1 2;
+element twoNodeLink 42 37 38 -mat $matID_D $matID_D  -dir 1 2;
 
 	
 
@@ -307,10 +315,10 @@ element zeroLength  46 33 21  -mat $matID_G1  -dir 1;
 
 
 
-element zeroLength  48 4 13 -mat $matID_G2 -dir 1;
-# element zeroLength  49 7 16 -mat $matID_G2  -dir 1;
-element zeroLength  50 33 21  -mat $matID_G2  -dir 1;
-# element zeroLength  51 36 30  -mat $matID_G2  -dir 1;
+# element zeroLength  48 4 13 -mat $matID_G2 -dir 1;
+# # element zeroLength  49 7 16 -mat $matID_G2  -dir 1;
+# element zeroLength  50 33 21  -mat $matID_G2  -dir 1;
+# # element zeroLength  51 36 30  -mat $matID_G2  -dir 1;
 
 	
 # #定义填充墙单元
@@ -324,7 +332,7 @@ element zeroLength  50 33 21  -mat $matID_G2  -dir 1;
 
 
 
-# display the model with the node numbers
+# # display the model with the node numbers
 # DisplayModel2D NodeNumbers;
 	
 
@@ -352,14 +360,35 @@ element zeroLength  50 33 21  -mat $matID_G2  -dir 1;
 	recorder Element -file $dataDir/PlasticDeformationPTstrands1.out -time -ele 60  plasticDeformation;	
 	recorder Element -file $dataDir/PlasticDeformationPTstrands2.out -time -ele 61  plasticDeformation;	
 
+# record floor displacements	
+	recorder Node -file $dataDir/Disp1.out -time -node 15 -dof 1 disp;
+	recorder Node -file $dataDir/Disp2.out -time -node 16 -dof 1 disp;
+
+############################################################################
+#              	Tendons Analysis                			   			   #
+############################################################################	
+pattern Plain 1 Linear  {
+load 50 0 0 0
+};
+puts "Tendon analysis"
+	constraints Plain;				
+	numberer Plain;						
+	system BandGeneral;
+     test EnergyIncr 1.0e-6 200;					
+	algorithm Newton;	
+    integrator LoadControl 1; 
+   analysis Static
+    analyze 1
+loadConst -time 0.0	
+	
 ############################################################################
 #              Pushover Analysis                			   			   #
 ############################################################################
-# # display deformed shape:
-	set ViewScale 5;
-	DisplayModel2D DeformedShape $ViewScale ;	# display deformed shape, the scaling factor needs to be adjusted for each model
+# # # display deformed shape:
+	# set ViewScale 5;
+	# DisplayModel2D DeformedShape $ViewScale ;	# display deformed shape, the scaling factor needs to be adjusted for each model
 
-
+source Preprocessing.tcl
 # set	dat1	0.005508021
 # set	dat2	0.008128342
 # set	dat3	0.010748663
@@ -384,7 +413,7 @@ set	dat5	0.05
 source Display.tcl
 
 puts "loads"
-pattern Plain 1 Linear  {
+pattern Plain 101 Linear  {
 load 50 1000 0 0
 };
 puts "analysis"
